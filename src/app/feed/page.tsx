@@ -125,7 +125,7 @@ export default function FeedPage() {
         )}
 
         {trips.map(trip => (
-          <div key={trip.id} style={{ borderBottom: '0.5px solid #1e1e1e', paddingBottom: '4px' }}>
+          <div key={trip.id} style={{ borderBottom: '0.5px solid rgb(30, 30, 30)', paddingBottom: '4px' }}>
 
             {/* Post header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px' }}>
@@ -196,11 +196,11 @@ export default function FeedPage() {
       {/* Bottom nav */}
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#111', borderTop: '0.5px solid #222', display: 'flex', padding: '8px 0' }}>
         {[
-          { icon: '🏠', label: 'Feed', path: '/feed' },
-          { icon: '🔍', label: 'Search', path: '/feed' },
-          { icon: '➕', label: 'Post', path: '/post' },
-          { icon: '💬', label: 'DMs', path: '/feed' },
-          { icon: '👤', label: 'Profile', path: '/profile' },
+         { icon: '🏠', label: 'Feed', path: '/feed' },
+{ icon: '➕', label: 'Post', path: '/post' },
+{ icon: '💬', label: 'DMs', path: '/feed' },
+{ icon: 'ℹ️', label: 'About', path: '/about' },
+{ icon: '👤', label: 'Profile', path: '/profile' }, 
         ].map((item, i) => (
           <div key={i} onClick={() => router.push(item.path)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', cursor: 'pointer' }}>
             <span style={{ fontSize: '20px' }}>{item.icon}</span>
