@@ -191,7 +191,7 @@ export default function FeedPage() {
         {[
           { icon: '🏠', label: 'Feed', path: '/feed' },
           { icon: '➕', label: 'Post', path: '/post' },
-          { icon: '💬', label: 'DMs', path: '/feed' },
+          { icon: '💬', label: 'DMs', path: '/dms' },
           { icon: 'ℹ️', label: 'About', path: '/about' },
           { icon: '👤', label: 'Profile', path: '/profile' },
         ].map((item, i) => (
