@@ -190,6 +190,7 @@ export default function FeedPage() {
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#111', borderTop: '0.5px solid #222', display: 'flex', padding: '8px 0' }}>
         {[
           { icon: '🏠', label: 'Feed', path: '/feed' },
+          { icon: '📍', label: 'Nearby', path: '/nearby' },
           { icon: '➕', label: 'Post', path: '/post' },
           { icon: '💬', label: 'DMs', path: '/dms' },
           { icon: 'ℹ️', label: 'About', path: '/about' },
