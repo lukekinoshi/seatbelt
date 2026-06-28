@@ -10,7 +10,9 @@ export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [currentProfile, setCurrentProfile] = useState<any>(null)
   const [trip, setTrip] = useState<any>(null)
+  const [otherProfile, setOtherProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -22,12 +24,34 @@ export default function MessagesPage() {
     if (!session) { router.push('/login'); return }
     setCurrentUser(session.user)
 
+    // Get current user profile
+    const { data: myProfile } = await supabase
+      .from('profiles').select('*').eq('id', session.user.id).single()
+    setCurrentProfile(myProfile)
+
+    // Get trip with driver profile
     const { data: tripData } = await supabase
       .from('trips').select('*, profiles(*)').eq('id', tripId).single()
     setTrip(tripData)
 
+    // Get other person's profile
+    const otherId = tripData?.driver_id === session.user.id
+      ? null // will get from messages
+      : tripData?.driver_id
+    
+    if (otherId) {
+      const { data: otherProf } = await supabase
+        .from('profiles').select('*').eq('id', otherId).single()
+      setOtherProfile(otherProf)
+    } else {
+      setOtherProfile(tripData?.profiles)
+    }
+
+    // Get messages
     const { data: msgs } = await supabase
-      .from('messages').select('*').eq('trip_id', tripId).order('created_at', { ascending: true })
+      .from('messages').select('*')
+      .eq('trip_id', tripId)
+      .order('created_at', { ascending: true })
     setMessages(msgs || [])
     setLoading(false)
   }
@@ -50,29 +74,43 @@ export default function MessagesPage() {
     if (!newMessage.trim() || !currentUser || !trip) return
     const content = newMessage.trim()
     setNewMessage('')
-    const receiverId = trip.driver_id === currentUser.id ? currentUser.id : trip.driver_id
-    const { data, error } = await supabase.from('messages').insert({
+
+    // Figure out receiver
+    let receiverId = trip.driver_id
+    if (trip.driver_id === currentUser.id) {
+      // I am the driver — find who messaged me
+      const otherMsg = messages.find(m => m.sender_id !== currentUser.id)
+      receiverId = otherMsg?.sender_id || currentUser.id
+    }
+
+    await supabase.from('messages').insert({
       trip_id: tripId,
       sender_id: currentUser.id,
       receiver_id: receiverId,
       content,
-    }).select('*').single()
-    if (!error && data) {
-      setMessages(prev => [...prev, data as Message])
-    }
+    })
   }
 
   function formatTime(timestamp: string) {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
 
+  const getSenderName = (msg: any) => {
+    if (msg.sender_id === currentUser?.id) return 'You'
+    return otherProfile?.full_name || 'User'
+  }
+
   return (
     <div style={{ height: '100vh', background: '#111', display: 'flex', flexDirection: 'column' }}>
 
+      {/* Header */}
       <div style={{ background: '#111', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '0.5px solid #222', flexShrink: 0 }}>
         <button onClick={() => router.push('/dms')} style={{ background: 'none', border: 'none', color: '#aaa', fontSize: '22px' }}>←</button>
+        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#2a2a2a', border: '0.5px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '600', color: '#aaa', flexShrink: 0 }}>
+          {otherProfile?.avatar_initials || '??'}
+        </div>
         <div style={{ flex: 1 }}>
-          <div style={{ color: '#e0e0e0', fontSize: '14px', fontWeight: '500' }}>{trip?.profiles?.full_name || 'Driver'}</div>
+          <div style={{ color: '#e0e0e0', fontSize: '14px', fontWeight: '500' }}>{otherProfile?.full_name || 'User'}</div>
           <div style={{ color: '#444', fontSize: '11px' }}>{trip?.origin} → {trip?.destination} · {trip?.departure_time}</div>
         </div>
         <div style={{ background: '#1a2a1a', color: '#6dba6d', fontSize: '11px', fontWeight: '600', padding: '4px 10px', borderRadius: '99px' }}>
@@ -80,6 +118,7 @@ export default function MessagesPage() {
         </div>
       </div>
 
+      {/* Trip card */}
       {trip && (
         <div style={{ margin: '12px 16px', background: '#1a1a1a', borderRadius: '12px', padding: '12px', border: '0.5px solid #2a2a2a', flexShrink: 0 }}>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -88,11 +127,11 @@ export default function MessagesPage() {
               <div style={{ width: '1px', height: '14px', background: '#333' }}></div>
               <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#c47a5a' }}></div>
             </div>
-            <div>
+            <div style={{ flex: 1 }}>
               <div style={{ color: '#e0e0e0', fontSize: '13px', fontWeight: '500' }}>{trip.origin}</div>
               <div style={{ color: '#555', fontSize: '12px', marginTop: '4px' }}>{trip.destination}</div>
             </div>
-            <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+            <div style={{ textAlign: 'right' }}>
               <div style={{ color: '#c8b86a', fontSize: '16px', fontWeight: '600' }}>{trip.suggested_price || 'Open'}</div>
               <div style={{ color: '#444', fontSize: '11px' }}>{trip.departure_time}</div>
             </div>
@@ -100,6 +139,7 @@ export default function MessagesPage() {
         </div>
       )}
 
+      {/* Messages */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {loading && <div style={{ textAlign: 'center', color: '#444', fontSize: '13px' }}>Loading...</div>}
         {!loading && messages.length === 0 && (
@@ -114,8 +154,8 @@ export default function MessagesPage() {
           return (
             <div key={i} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
               <div style={{ maxWidth: '75%' }}>
-                <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px', paddingLeft: isMe ? '0' : '4px', paddingRight: isMe ? '4px' : '0', textAlign: isMe ? 'right' : 'left' }}>
-                  {isMe ? 'You' : (trip?.profiles?.full_name || 'Driver')}
+                <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px', textAlign: isMe ? 'right' : 'left', padding: '0 4px' }}>
+                  {getSenderName(msg)}
                 </div>
                 <div style={{
                   padding: '10px 14px',
@@ -137,12 +177,13 @@ export default function MessagesPage() {
         <div ref={bottomRef} />
       </div>
 
+      {/* Input */}
       <div style={{ padding: '12px 16px', borderTop: '0.5px solid #222', display: 'flex', gap: '10px', alignItems: 'center', background: '#111', flexShrink: 0 }}>
         <input
           type="text" value={newMessage}
           onChange={e => setNewMessage(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          placeholder="Message driver..."
+          placeholder={`Message ${otherProfile?.full_name || 'driver'}...`}
           style={{ flex: 1, background: '#1a1a1a', border: '0.5px solid #2a2a2a', borderRadius: '99px', padding: '10px 16px', fontSize: '14px', color: '#e0e0e0', outline: 'none' }}
         />
         <button onClick={sendMessage}
