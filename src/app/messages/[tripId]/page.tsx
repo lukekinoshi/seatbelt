@@ -18,9 +18,9 @@ export default function MessagesPage() {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
   async function loadData() {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/login'); return }
-    setCurrentUser(user)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { router.push('/login'); return }
+    setCurrentUser(session.user)
 
     const { data: tripData } = await supabase
       .from('trips').select('*, profiles(*)').eq('id', tripId).single()
@@ -70,7 +70,7 @@ export default function MessagesPage() {
     <div style={{ height: '100vh', background: '#111', display: 'flex', flexDirection: 'column' }}>
 
       <div style={{ background: '#111', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '0.5px solid #222', flexShrink: 0 }}>
-        <button onClick={() => router.push('/feed')} style={{ background: 'none', border: 'none', color: '#aaa', fontSize: '22px' }}>←</button>
+        <button onClick={() => router.push('/dms')} style={{ background: 'none', border: 'none', color: '#aaa', fontSize: '22px' }}>←</button>
         <div style={{ flex: 1 }}>
           <div style={{ color: '#e0e0e0', fontSize: '14px', fontWeight: '500' }}>{trip?.profiles?.full_name || 'Driver'}</div>
           <div style={{ color: '#444', fontSize: '11px' }}>{trip?.origin} → {trip?.destination} · {trip?.departure_time}</div>
@@ -114,6 +114,9 @@ export default function MessagesPage() {
           return (
             <div key={i} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
               <div style={{ maxWidth: '75%' }}>
+                <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px', paddingLeft: isMe ? '0' : '4px', paddingRight: isMe ? '4px' : '0', textAlign: isMe ? 'right' : 'left' }}>
+                  {isMe ? 'You' : (trip?.profiles?.full_name || 'Driver')}
+                </div>
                 <div style={{
                   padding: '10px 14px',
                   borderRadius: isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
@@ -143,7 +146,7 @@ export default function MessagesPage() {
           style={{ flex: 1, background: '#1a1a1a', border: '0.5px solid #2a2a2a', borderRadius: '99px', padding: '10px 16px', fontSize: '14px', color: '#e0e0e0', outline: 'none' }}
         />
         <button onClick={sendMessage}
-          style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#c8b86a', border: 'none', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#c8b86a', border: 'none', fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer' }}>
           ↑
         </button>
       </div>
