@@ -164,7 +164,23 @@ export default function LoginPage() {
             style={{ width: '100%', background: '#c8b86a', color: '#111', border: 'none', borderRadius: '10px', padding: '13px', fontSize: '14px', fontWeight: '700', letterSpacing: '1px', opacity: loading ? 0.7 : 1, cursor: 'pointer' }}>
             {loading ? 'PLEASE WAIT...' : isSignUp ? 'CREATE ACCOUNT' : 'SIGN IN'}
           </button>
-
+          {!isSignUp && (
+  <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '12px' }}>
+    <span
+      onClick={async () => {
+        if (!email) { setError('Enter your email first'); return }
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: 'https://seatbelt-6azj.vercel.app/reset-password'
+        })
+        if (error) { setError(error.message) }
+        else { setError(''); alert('Password reset email sent! Check your inbox.') }
+      }}
+      style={{ color: '#c8b86a', cursor: 'pointer', fontSize: '12px' }}
+    >
+      Forgot password?
+    </span>
+  </p>
+)}
           <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', color: '#444' }}>
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
             <span onClick={() => { setIsSignUp(!isSignUp); setError('') }} style={{ color: '#c8b86a', fontWeight: '500', cursor: 'pointer' }}>
