@@ -101,7 +101,7 @@ export default function LoginPage() {
             <SeatBeltLogo size={100} />
           </div>
           <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#e0e0e0', margin: '0 0 6px', letterSpacing: '4px' }}>SEATBELT</h1>
-          <p style={{ color: '#444', fontSize: '11px', margin: 0, letterSpacing: '3px' }}>RIDE SMARTER. PAY LESS.</p>
+          <p style={{ color: '#444', fontSize: '11px', margin: 0, letterSpacing: '3px' }}>The Way Rideshare Should Be.</p>
         </div>
 
         <div style={{ background: '#1a1a1a', borderRadius: '16px', padding: '28px', border: '0.5px solid #2a2a2a' }}>

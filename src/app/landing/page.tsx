@@ -70,7 +70,8 @@ export default function LandingPage() {
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center', borderBottom: '0.5px solid #1e1e1e' }}>
         <SeatBeltLogo size={140} />
         <h1 style={{ fontSize: 'clamp(36px, 8vw, 72px)', fontWeight: '700', letterSpacing: '6px', margin: '28px 0 12px', color: '#e0e0e0', lineHeight: 1.1 }}>SEATBELT</h1>
-        <p style={{ fontSize: '14px', letterSpacing: '4px', color: '#555', marginBottom: '28px' }}>RIDE SMARTER. PAY LESS.</p>
+        <p style={{ fontSize: '12px', fontStyle: 'italic', color: '#c8b86a', letterSpacing: '2px', margin: '-10px 0 12px', textAlign: 'center' }}>by Kinoshi</p>
+        <p style={{ fontSize: '14px', letterSpacing: '4px', color: '#555', marginBottom: '28px' }}>The Way Rideshare Should Be</p>
         <p style={{ fontSize: '18px', color: '#777', maxWidth: '560px', lineHeight: 1.8, marginBottom: '48px' }}>
           The community rideshare where <span style={{ color: '#c8b86a', fontWeight: '500' }}>drivers post their routes</span> and riders negotiate a fair price. No algorithms. No surge. Just neighbors moving together.
         </p>
@@ -198,7 +199,7 @@ export default function LandingPage() {
           <span onClick={() => router.push('/about')} style={{ color: '#333', fontSize: '12px', cursor: 'pointer' }}>About</span>
           <span onClick={() => router.push('/login')} style={{ color: '#333', fontSize: '12px', cursor: 'pointer' }}>Sign in</span>
         </div>
-        <p style={{ color: '#333', fontSize: '11px', margin: 0 }}>© 2025 SeatBelt LLC · Brooklyn, New York</p>
+        <p style={{ color: '#333', fontSize: '11px', margin: 0 }}>© 2026 SeatBelt by Kinoshi LLC · Brooklyn, New York</p>
       </div>
 
     </div>
