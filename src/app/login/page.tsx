@@ -75,6 +75,7 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     if (isSignUp) {
+      if (!fullName.trim()) { setError('Please enter your full name'); setLoading(false); return }
       const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
       if (signUpError) { setError(signUpError.message); setLoading(false); return }
       if (data.user) {
@@ -117,8 +118,8 @@ export default function LoginPage() {
 
           {isSignUp && (
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '11px', color: '#555', display: 'block', marginBottom: '5px', letterSpacing: '0.5px' }}>FULL NAME</label>
-              <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Your full name"
+              <label style={{ fontSize: '11px', color: '#555', display: 'block', marginBottom: '5px', letterSpacing: '0.5px' }}>FULL NAME <span style={{ color: '#f87171' }}>*</span></label>
+              <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Your full name (required)"
                 style={{ width: '100%', background: '#222', border: '0.5px solid #333', borderRadius: '8px', padding: '10px 12px', fontSize: '14px', color: '#e0e0e0', outline: 'none' }} />
             </div>
           )}
