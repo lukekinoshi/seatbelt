@@ -16,8 +16,33 @@ export default function ProfilePage() {
   const [commuteTime, setCommuteTime] = useState('')
   const [commuteWager, setCommuteWager] = useState('')
   const [savingCommute, setSavingCommute] = useState(false)
+  const [showEditProfile, setShowEditProfile] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editCarMake, setEditCarMake] = useState('')
+  const [editCarModel, setEditCarModel] = useState('')
+  const [editCarYear, setEditCarYear] = useState('')
+  const [editIsDriver, setEditIsDriver] = useState(false)
+  const [savingProfile, setSavingProfile] = useState(false)
 
   useEffect(() => { loadProfile() }, [])
+
+  async function saveProfile() {
+    setSavingProfile(true)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    const initials = editName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+    await supabase.from('profiles').update({
+      full_name: editName,
+      avatar_initials: initials,
+      car_make: editCarMake,
+      car_model: editCarModel,
+      car_year: editCarYear,
+      is_driver: editIsDriver,
+    }).eq('id', session.user.id)
+    setSavingProfile(false)
+    setShowEditProfile(false)
+    loadProfile()
+  }
 
   async function loadProfile() {
     const { data: { session } } = await supabase.auth.getSession()
@@ -91,7 +116,13 @@ export default function ProfilePage() {
           <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: '#2a2a2a', border: '2px solid #444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '700', color: '#aaa', margin: '0 auto 14px' }}>
             {profile?.avatar_initials || '??'}
           </div>
-          <div style={{ color: '#e0e0e0', fontSize: '20px', fontWeight: '600', marginBottom: '4px' }}>{profile?.full_name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '4px' }}>
+            <div style={{ color: '#e0e0e0', fontSize: '20px', fontWeight: '600' }}>{profile?.full_name}</div>
+            <button onClick={() => { setShowEditProfile(true); setEditName(profile?.full_name || ''); setEditCarMake(profile?.car_make || ''); setEditCarModel(profile?.car_model || ''); setEditCarYear(profile?.car_year || ''); setEditIsDriver(profile?.is_driver || false) }}
+              style={{ background: 'none', border: '0.5px solid #333', borderRadius: '99px', padding: '3px 10px', color: '#555', fontSize: '11px', cursor: 'pointer' }}>
+              Edit
+            </button>
+          </div>
           <div style={{ color: '#555', fontSize: '13px', marginBottom: '16px' }}>
             {profile?.is_driver ? '🚗 Driver & Rider' : '🙋 Rider'}
           </div>
@@ -108,6 +139,47 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
+
+        {/* Edit Profile Modal */}
+        {showEditProfile && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#1a1a1a', borderRadius: '16px', padding: '24px', width: '100%', maxWidth: '400px', border: '0.5px solid #2a2a2a' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <span style={{ color: '#e0e0e0', fontSize: '16px', fontWeight: '600' }}>Edit Profile</span>
+                <button onClick={() => setShowEditProfile(false)} style={{ background: 'none', border: 'none', color: '#555', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ fontSize: '11px', color: '#555', display: 'block', marginBottom: '4px', letterSpacing: '0.5px' }}>FULL NAME</label>
+                <input type="text" value={editName} onChange={e => setEditName(e.target.value)} placeholder="Your full name"
+                  style={{ width: '100%', background: '#222', border: '0.5px solid #333', borderRadius: '8px', padding: '10px 12px', fontSize: '14px', color: '#e0e0e0', outline: 'none' }} />
+              </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: '#aaa' }}>
+                  <input type="checkbox" checked={editIsDriver} onChange={e => setEditIsDriver(e.target.checked)}
+                    style={{ width: '16px', height: '16px', accentColor: '#c8b86a' }} />
+                  I want to post trips as a driver
+                </label>
+              </div>
+              {editIsDriver && (
+                <div style={{ background: '#222', borderRadius: '10px', padding: '14px', marginBottom: '14px', border: '0.5px solid #333' }}>
+                  <p style={{ fontSize: '11px', color: '#555', margin: '0 0 10px', letterSpacing: '0.5px' }}>YOUR VEHICLE</p>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input type="text" value={editCarMake} onChange={e => setEditCarMake(e.target.value)} placeholder="Make"
+                      style={{ flex: 1, background: '#1a1a1a', border: '0.5px solid #333', borderRadius: '8px', padding: '8px 10px', fontSize: '13px', color: '#e0e0e0', outline: 'none' }} />
+                    <input type="text" value={editCarModel} onChange={e => setEditCarModel(e.target.value)} placeholder="Model"
+                      style={{ flex: 1, background: '#1a1a1a', border: '0.5px solid #333', borderRadius: '8px', padding: '8px 10px', fontSize: '13px', color: '#e0e0e0', outline: 'none' }} />
+                    <input type="text" value={editCarYear} onChange={e => setEditCarYear(e.target.value)} placeholder="Year"
+                      style={{ width: '80px', background: '#1a1a1a', border: '0.5px solid #333', borderRadius: '8px', padding: '8px 10px', fontSize: '13px', color: '#e0e0e0', outline: 'none' }} />
+                  </div>
+                </div>
+              )}
+              <button onClick={saveProfile} disabled={savingProfile || !editName}
+                style={{ width: '100%', background: '#c8b86a', color: '#111', border: 'none', borderRadius: '10px', padding: '13px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', opacity: savingProfile || !editName ? 0.7 : 1 }}>
+                {savingProfile ? 'SAVING...' : 'SAVE CHANGES'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Vehicle */}
         {profile?.car_make && (
