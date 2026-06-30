@@ -35,16 +35,21 @@ export default function MessagesPage() {
     setTrip(tripData)
 
     // Get other person's profile
-    const otherId = tripData?.driver_id === session.user.id
-      ? null // will get from messages
-      : tripData?.driver_id
-    
-    if (otherId) {
-      const { data: otherProf } = await supabase
-        .from('profiles').select('*').eq('id', otherId).single()
-      setOtherProfile(otherProf)
+    if (tripData?.driver_id === session.user.id) {
+      // I am the driver — find the first person who messaged me
+      const { data: firstMsg } = await supabase
+        .from('messages').select('sender_id').eq('trip_id', tripId)
+        .neq('sender_id', session.user.id).limit(1).single()
+      if (firstMsg) {
+        const { data: otherProf } = await supabase
+          .from('profiles').select('*').eq('id', firstMsg.sender_id).single()
+        setOtherProfile(otherProf)
+      }
     } else {
-      setOtherProfile(tripData?.profiles)
+      // I am the rider — get the driver's profile
+      const { data: otherProf } = await supabase
+        .from('profiles').select('*').eq('id', tripData?.driver_id).single()
+      setOtherProfile(otherProf)
     }
 
     // Get messages
