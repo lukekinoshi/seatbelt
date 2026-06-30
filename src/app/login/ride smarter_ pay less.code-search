@@ -1,0 +1,14 @@
+# Query: ride smarter. pay less
+# ContextLines: 1
+
+2 results - 2 files
+
+src/app/landing/page.tsx:
+  72          <h1 style={{ fontSize: 'clamp(36px, 8vw, 72px)', fontWeight: '700', letterSpacing: '6px', margin: '28px 0 12px', color: '#e0e0e0', lineHeight: 1.1 }}>SEATBELT</h1>
+  73:         <p style={{ fontSize: '14px', letterSpacing: '4px', color: '#555', marginBottom: '28px' }}>The Way Rideshare Should Be.</p>
+  74          <p style={{ fontSize: '18px', color: '#777', maxWidth: '560px', lineHeight: 1.8, marginBottom: '48px' }}>
+
+src/app/login/page.tsx:
+  103            <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#e0e0e0', margin: '0 0 6px', letterSpacing: '4px' }}>SEATBELT</h1>
+  104:           <p style={{ color: '#444', fontSize: '11px', margin: 0, letterSpacing: '3px' }}>The Way Rideshare Should Be.</p>
+  105          </div>
