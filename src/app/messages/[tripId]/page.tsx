@@ -205,8 +205,15 @@ export default function MessagesPage() {
           <button
             onClick={() => {
               const price = parseFloat(trip.suggested_price?.replace(/[^0-9.]/g, '') || '0')
-              setPaymentAmount(price)
-              setShowPayment(true)
+              if (price <= 0) {
+                const input = prompt('Enter the agreed ride price ($):')
+                const custom = parseFloat(input || '0')
+                if (custom > 0) { setPaymentAmount(custom); setShowPayment(true) }
+                else { alert('Please enter a valid price') }
+              } else {
+                setPaymentAmount(price)
+                setShowPayment(true)
+              }
             }}
             style={{ width: '100%', background: '#1e2a1e', color: '#6dba6d', border: '0.5px solid #2a4a2a', borderRadius: '10px', padding: '11px', fontSize: '13px', fontWeight: '700', cursor: 'pointer', letterSpacing: '0.5px' }}>
             🚗 CONFIRM RIDE & PAY
