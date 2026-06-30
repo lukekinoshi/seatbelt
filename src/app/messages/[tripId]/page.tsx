@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { supabase, Message } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
+import PaymentModal from '@/app/components/PaymentModal'
 
 export default function MessagesPage() {
   const router = useRouter()
@@ -14,6 +15,8 @@ export default function MessagesPage() {
   const [trip, setTrip] = useState<any>(null)
   const [otherProfile, setOtherProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [showPayment, setShowPayment] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { loadData() }, [tripId])
@@ -181,6 +184,35 @@ export default function MessagesPage() {
         })}
         <div ref={bottomRef} />
       </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <PaymentModal
+          amount={paymentAmount}
+          tripId={tripId}
+          driverId={trip?.driver_id || ''}
+          onSuccess={() => {
+            setShowPayment(false)
+            alert('Payment successful! Your ride is confirmed. 🚗')
+          }}
+          onCancel={() => setShowPayment(false)}
+        />
+      )}
+
+      {/* Confirm Ride Button - only show to riders */}
+      {currentUser && trip && currentUser.id !== trip.driver_id && (
+        <div style={{ padding: '8px 16px', background: '#111', borderTop: '0.5px solid #1a1a1a' }}>
+          <button
+            onClick={() => {
+              const price = parseFloat(trip.suggested_price?.replace(/[^0-9.]/g, '') || '0')
+              setPaymentAmount(price)
+              setShowPayment(true)
+            }}
+            style={{ width: '100%', background: '#1e2a1e', color: '#6dba6d', border: '0.5px solid #2a4a2a', borderRadius: '10px', padding: '11px', fontSize: '13px', fontWeight: '700', cursor: 'pointer', letterSpacing: '0.5px' }}>
+            🚗 CONFIRM RIDE & PAY
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <div style={{ padding: '12px 16px', borderTop: '0.5px solid #222', display: 'flex', gap: '10px', alignItems: 'center', background: '#111', flexShrink: 0 }}>
