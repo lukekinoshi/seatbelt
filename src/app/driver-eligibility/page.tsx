@@ -212,7 +212,7 @@ export default function DriverEligibilityPage() {
           <h2 style={{ margin: '0 0 10px', fontSize: '16px' }}>New York Driver documents</h2>
           <p style={{ margin: '0 0 12px', color: '#aaa', fontSize: '13px', lineHeight: 1.5 }}>Upload your current New York vehicle registration and proof of insurance. Documents remain private and are not visible on your public profile.</p>
           <p style={{ margin: '0 0 18px', color: '#888', fontSize: '12px', lineHeight: 1.5 }}>PDF, JPEG, or PNG only. Maximum 10 MB per document. Your Driver access remains unavailable while verification is pending; Rider mode remains available.</p>
-          <p style={{ margin: '0 0 18px', color: '#888', fontSize: '12px', lineHeight: 1.5 }}>Incomplete document uploads are automatically deleted within 24 hours. Submitted documents remain private while awaiting review.</p>
+          <p style={{ margin: '0 0 18px', color: '#888', fontSize: '12px', lineHeight: 1.5 }}>Incomplete document uploads are scheduled for deletion within 72 hours. Submitted documents remain private while awaiting review.</p>
           {(errorMessages.length > 0 || systemError) && (
             <div role="alert" aria-live="assertive" style={{ marginBottom: '16px', border: '1px solid #f87171', borderRadius: '10px', background: '#2a1a1a', padding: '12px 14px', color: '#fecaca', fontSize: '13px', lineHeight: 1.5 }}>
               <strong>Please correct the following:</strong>
