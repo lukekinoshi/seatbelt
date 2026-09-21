@@ -97,7 +97,10 @@ export async function GET(request: NextRequest) {
     if (identityError) throw identityError
 
     return responseForEligibility(eligibility, identity?.status || null)
-  } catch {
+  } catch (error) {
+    console.error('Driver eligibility GET failed', {
+      message: error instanceof Error ? error.message : 'Unknown server error',
+    })
     return NextResponse.json({ error: 'Driver eligibility is temporarily unavailable. Please try again later.' }, { status: 503 })
   }
 }
@@ -249,7 +252,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ error: 'Unsupported Driver Eligibility request.' }, { status: 400 })
-  } catch {
+  } catch (error) {
+    console.error('Driver eligibility POST failed', {
+      message: error instanceof Error ? error.message : 'Unknown server error',
+    })
     return NextResponse.json({ error: 'Driver eligibility is temporarily unavailable. Please try again later.' }, { status: 503 })
   }
 }
