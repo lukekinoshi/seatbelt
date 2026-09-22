@@ -13,6 +13,7 @@ export default function ProfileSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -36,6 +37,11 @@ export default function ProfileSettingsPage() {
       const loadedProfile = data as Profile
       setProfile(loadedProfile)
       setMode(loadedProfile.last_session_mode === 'driver' && loadedProfile.is_driver ? 'driver' : 'rider')
+
+      const adminResponse = await fetch('/api/admin/security', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      setIsAdmin(adminResponse.ok)
       setLoading(false)
     })
   }, [router])
@@ -104,6 +110,7 @@ export default function ProfileSettingsPage() {
             <label style={{ display: 'flex', gap: '10px', padding: '12px 0', cursor: profile?.is_driver ? 'pointer' : 'not-allowed', color: profile?.is_driver ? '#e0e0e0' : '#666' }}><input type="radio" name="settings-mode" disabled={!profile?.is_driver} checked={mode === 'driver'} onChange={() => setMode('driver')} /> Driver {!profile?.is_driver && '(not enabled for this account)'}</label>
           </fieldset>
           <button type="button" onClick={() => void saveMode()} disabled={saving} style={{ width: '100%', marginTop: '12px', border: 0, borderRadius: '10px', padding: '13px', background: '#c8b86a', color: '#111', fontWeight: '700', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>{saving ? 'SAVING...' : 'SAVE SESSION MODE'}</button>
+          {isAdmin && <button type="button" onClick={() => router.push('/admin/security')} style={{ width: '100%', marginTop: '12px', border: '0.5px solid #555', borderRadius: '10px', padding: '13px', background: 'transparent', color: '#e0e0e0', fontWeight: '700', cursor: 'pointer' }}>ADMINISTRATOR SECURITY</button>}
         </section>
       </div>
     </main>
