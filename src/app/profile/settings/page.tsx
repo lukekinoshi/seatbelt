@@ -111,6 +111,7 @@ export default function ProfileSettingsPage() {
           </fieldset>
           <button type="button" onClick={() => void saveMode()} disabled={saving} style={{ width: '100%', marginTop: '12px', border: 0, borderRadius: '10px', padding: '13px', background: '#c8b86a', color: '#111', fontWeight: '700', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>{saving ? 'SAVING...' : 'SAVE SESSION MODE'}</button>
           {isAdmin && <button type="button" onClick={() => router.push('/admin/security')} style={{ width: '100%', marginTop: '12px', border: '0.5px solid #555', borderRadius: '10px', padding: '13px', background: 'transparent', color: '#e0e0e0', fontWeight: '700', cursor: 'pointer' }}>ADMINISTRATOR SECURITY</button>}
+          {isAdmin && <button type="button" onClick={() => router.push('/admin/driver-eligibility')} style={{ width: '100%', marginTop: '12px', border: '0.5px solid #555', borderRadius: '10px', padding: '13px', background: 'transparent', color: '#e0e0e0', fontWeight: '700', cursor: 'pointer' }}>DRIVER ELIGIBILITY REVIEW</button>}
         </section>
       </div>
     </main>

@@ -259,6 +259,18 @@ Status: Approved — Implemented Private Upload Workflow / Attorney Review
 - Requirement: Incomplete Driver Eligibility uploads are tracked as private drafts and scheduled for deletion within 72 hours. Submitted documents remain private while awaiting the future authorized review workflow.
 - Implementation note: Vercel Hobby permits the protected Production Cron route to run once daily. Drafts become eligible after 48 hours so the next scheduled run removes them within the 72-hour window; `CRON_SECRET` must remain server-only. Cron is not invoked for Preview deployments.
 - Open questions: Confirm New York-specific required insurance coverage, registration/inspection requirements, background and motor-vehicle-record provider, document-review workflow, technical upload limits, and whether a specialized verification provider can validate each requirement.
+## Phase 2 — Private Driver Eligibility Review Portal
+
+Status: Approved — In Progress
+
+- Requirement: The two approved founding administrators may review private Driver Eligibility documents only after verified sign-in and AAL2 MFA.
+- Implementation note: Review actions are `approved`, `rejected`, or `needs_update`; safe reason codes are stored separately from document contents.
+- Implementation note: Document previews use private signed URLs valid for 10 minutes and are never made public.
+- Implementation note: If Stripe reports that a stored Verification Session no longer exists, Seatbelt clears the stale reference and starts a fresh session; raw provider errors are not shown to the user.
+- Requirement: Drivers receive only safe signed-in status guidance; document details are not sent through ordinary email.
+- Staff accounts, automated DMV verification, external document providers, analytics, and notification delivery remain deferred.
+- Attorney/privacy review: Required before public release because this workflow processes registration, insurance, identity, access-control, and retention data.
+
 ## VERY IMPORTANT — External AGENTS.md Update
 
 This is **not** a Seatbelt decision or follow-up. It records a major update required in the external instruction file: `C:\Users\Github\AGENTS\AGENTS.md`.
@@ -266,4 +278,4 @@ This is **not** a Seatbelt decision or follow-up. It records a major update requ
 - Deferred external action: After Seatbelt is complete, create a dedicated private Codex Skills repository for stable cross-project skills and package them as a Codex plugin for remote/cloud distribution.
 - External AGENTS.md direction: Keep experimental or personal skills in the local Codex skills directory; store project-specific team skills in that project's `.agents/skills` directory; use the private Skills repository/plugin for reusable cross-project skills such as the permanent Planner, Builder, and Reviewer agents.
 - This notice must always remain the final section of this file.
-- Place every Seatbelt decision and follow-up above this notice.
+- Sequencing decision: Phase 2 connects the private Driver Eligibility upload workflow to the approved founding-administrator review workflow. Staff review, role expansion, and clearance delegation remain deferred.

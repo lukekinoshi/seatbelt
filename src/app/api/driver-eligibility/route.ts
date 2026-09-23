@@ -41,9 +41,11 @@ function responseForEligibility(eligibility: {
   registration_status: string
   registration_expires_on: string | null
   registration_submitted_at: string | null
+  registration_rejection_code: string | null
   insurance_status: string
   insurance_expires_on: string | null
   insurance_submitted_at: string | null
+  insurance_rejection_code: string | null
   overall_status: string
 } | null, identityStatus: string | null) {
   return NextResponse.json({
@@ -54,11 +56,13 @@ function responseForEligibility(eligibility: {
         status: eligibility.registration_status,
         expiresOn: eligibility.registration_expires_on,
         submittedAt: eligibility.registration_submitted_at,
+        rejectionCode: eligibility.registration_rejection_code,
       },
       insurance: {
         status: eligibility.insurance_status,
         expiresOn: eligibility.insurance_expires_on,
         submittedAt: eligibility.insurance_submitted_at,
+        rejectionCode: eligibility.insurance_rejection_code,
       },
     },
   })
@@ -84,7 +88,7 @@ export async function GET(request: NextRequest) {
     const [{ data: eligibility, error: eligibilityError }, { data: identity, error: identityError }] = await Promise.all([
       serviceClient
         .from('driver_eligibility')
-        .select('registration_status, registration_expires_on, registration_submitted_at, insurance_status, insurance_expires_on, insurance_submitted_at, overall_status')
+        .select('registration_status, registration_expires_on, registration_submitted_at, registration_rejection_code, insurance_status, insurance_expires_on, insurance_submitted_at, insurance_rejection_code, overall_status')
         .eq('user_id', user.id)
         .maybeSingle(),
       serviceClient

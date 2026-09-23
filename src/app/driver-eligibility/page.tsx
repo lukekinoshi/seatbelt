@@ -12,8 +12,8 @@ type FieldErrors = Partial<Record<FieldKey, string>>
 
 type Eligibility = {
   overallStatus: OverallStatus
-  registration: { status: DocumentStatus; expiresOn: string | null; submittedAt: string | null }
-  insurance: { status: DocumentStatus; expiresOn: string | null; submittedAt: string | null }
+  registration: { status: DocumentStatus; expiresOn: string | null; submittedAt: string | null; rejectionCode: string | null }
+  insurance: { status: DocumentStatus; expiresOn: string | null; submittedAt: string | null; rejectionCode: string | null }
 }
 
 type EligibilityResponse = {
@@ -224,6 +224,8 @@ export default function DriverEligibilityPage() {
           )}
           <p role="status" style={{ color: statusColor(identityStatus), fontSize: '13px' }}>Identity verification: {statusLabel(identityStatus)}</p>
           <p role="status" style={{ color: statusColor(eligibility?.overallStatus || 'incomplete'), fontSize: '13px', marginBottom: '20px' }}>Driver Eligibility: {statusLabel(eligibility?.overallStatus || 'incomplete')}</p>
+          {eligibility?.registration.rejectionCode && <p role="status" style={{ color: '#f87171', fontSize: '12px' }}>Registration review: {statusLabel(eligibility.registration.rejectionCode)}. Please upload an updated document.</p>}
+          {eligibility?.insurance.rejectionCode && <p role="status" style={{ color: '#f87171', fontSize: '12px', marginBottom: '20px' }}>Insurance review: {statusLabel(eligibility.insurance.rejectionCode)}. Please upload an updated document.</p>}
 
           <form onSubmit={submitEligibility} noValidate>
             <DocumentUploadCard

@@ -14,13 +14,15 @@ Complete: Keep the existing driver eligibility gate unchanged.
 
 ## Phase 2 — Private Driver-Eligibility Review Portal
 
-Status: Planned
+Status: In Progress — implementation complete; manual acceptance pending
 
 Checklist:
 
-Planned: Add administrator-only review actions and an append-only review audit trail for private driver documents.
-Planned: Show drivers safe, signed-in status and reason messages without placing document details in email.
-Planned: Require the Phase 1 administrator authority and AAL2 protection for every review action.
+Complete: Add administrator-only review actions and an append-only review audit trail for private driver documents.
+Complete: Show drivers safe, signed-in status and reason messages without placing document details in email.
+Complete: Require the Phase 1 administrator authority and AAL2 protection for every review action.
+Complete: Provide private document previews through 10-minute signed URLs.
+In-Progress: Perform manual AAL2 administrator review and driver-facing acceptance checks.
 
 ## Phase 3 — Retention and Generic Notifications
 
